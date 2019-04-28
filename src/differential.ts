@@ -7,7 +7,7 @@ import {
 } from '@babel/types'
 import {zip} from 'lodash'
 
-function globalFunctions(program: Program): FunctionDeclaration[] {
+export function globalFunctions(program: Program): FunctionDeclaration[] {
     return program.body.filter(statement =>
         isFunctionDeclaration(statement)
     ) as FunctionDeclaration[]
@@ -21,7 +21,7 @@ function removedIdentifiers(prev: string[], curr: string[]) {
     return prev.filter(name => !curr.includes(name))
 }
 
-function diffFunctions(
+export function diffFunctions(
     prev: FunctionDeclaration[],
     curr: FunctionDeclaration[]
 ) {
@@ -39,7 +39,7 @@ function diffFunctions(
     ]
 }
 
-export default function dx(prevCode: string, currCode: string) {
+export function dx(prevCode: string, currCode: string) {
     const {program: prevProgram} = parse(prevCode)
     const {program: currProgram} = parse(currCode)
     return {

@@ -1,5 +1,5 @@
-import dx from '../src/differential'
-
+import * as dx from 'differential'
+import {parse} from '@babel/parser'
 function genFunction(name: string, ...args: string[]) {
     return `
         function ${name}(${args.join(',')}) {}
@@ -13,7 +13,9 @@ describe('differential', () => {
         const baz = genFunction('baz')
 
         it('outputs added functions', () => {
-            const {functions} = dx(foo, foo + bar + baz)
+            const prev = dx.globalFunctions(parse(foo).program)
+            const next = dx.globalFunctions(parse(foo + bar + baz).program)
+            const functions = dx.diffFunctions(prev, next)
             const barDiff = {
                 identifier: 'bar',
                 added: true
@@ -28,7 +30,9 @@ describe('differential', () => {
         })
 
         it('outputs removed functions', () => {
-            const {functions} = dx(foo + bar + baz, foo)
+            const prev = dx.globalFunctions(parse(foo + bar + baz).program)
+            const next = dx.globalFunctions(parse(foo).program)
+            const functions = dx.diffFunctions(prev, next)
 
             const barDiff = {
                 identifier: 'bar',

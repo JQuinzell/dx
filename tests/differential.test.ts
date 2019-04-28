@@ -13,19 +13,34 @@ describe('differential', () => {
         const baz = genFunction('baz')
 
         it('outputs added functions', () => {
-            const {
-                functions: {added}
-            } = dx(foo, foo + bar + baz)
-
-            expect(added).toEqual(['bar', 'baz'])
+            const {functions} = dx(foo, foo + bar + baz)
+            const barDiff = {
+                identifier: 'bar',
+                added: true
+            }
+            const bazDiff = {
+                identifier: 'baz',
+                added: true
+            }
+            expect(functions).toEqual(
+                expect.arrayContaining([barDiff, bazDiff])
+            )
         })
 
         it('outputs removed functions', () => {
-            const {
-                functions: {removed}
-            } = dx(foo + bar + baz, foo)
+            const {functions} = dx(foo + bar + baz, foo)
 
-            expect(removed).toEqual(['bar', 'baz'])
+            const barDiff = {
+                identifier: 'bar',
+                removed: true
+            }
+            const bazDiff = {
+                identifier: 'baz',
+                removed: true
+            }
+            expect(functions).toEqual(
+                expect.arrayContaining([barDiff, bazDiff])
+            )
         })
     })
 })

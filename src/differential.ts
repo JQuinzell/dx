@@ -1,5 +1,10 @@
 import {parse} from '@babel/parser'
-import {Program, FunctionDeclaration, isFunctionDeclaration} from '@babel/types'
+import {
+    Program,
+    FunctionDeclaration,
+    isFunctionDeclaration,
+    identifier
+} from '@babel/types'
 import {zip} from 'lodash'
 
 function globalFunctions(program: Program): FunctionDeclaration[] {
@@ -22,11 +27,16 @@ function diffFunctions(
 ) {
     const prevNames = prev.map(func => func.id.name)
     const currNames = curr.map(func => func.id.name)
-    return {
-        added: addedIdentifiers(prevNames, currNames),
-        removed: removedIdentifiers(prevNames, currNames),
-        changed: {}
-    }
+    return [
+        ...addedIdentifiers(prevNames, currNames).map(identifier => ({
+            identifier,
+            added: true
+        })),
+        ...removedIdentifiers(prevNames, currNames).map(identifier => ({
+            identifier,
+            removed: true
+        }))
+    ]
 }
 
 export default function dx(prevCode: string, currCode: string) {
